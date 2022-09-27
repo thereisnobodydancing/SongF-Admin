@@ -1,5 +1,5 @@
 <template>
-  <div class="relative pt-[66px]">
+  <div class="relative pt-16">
 
     <!-- 头部（header） -->
     <layout-header />
@@ -24,5 +24,5 @@
 </template>
 
 <script setup>
-const mainHeight = document.documentElement.clientHeight - 66
+const mainHeight = document.documentElement.clientHeight - 64
 </script>
