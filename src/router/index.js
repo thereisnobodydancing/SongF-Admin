@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '../components/Layout/index.vue'
+import shop from './shop.js'
 
 const routes= [
   {
@@ -26,6 +27,8 @@ const routes= [
         component:() => import('../views/home/index.vue'),
         meta: { name: 'Home'}
       },
+      /** --- 商城管理 --- **/
+      ...shop
     ]
   },
 
