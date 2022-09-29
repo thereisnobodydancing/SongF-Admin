@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Layout from '../components/Layout/index.vue'
 import shop from './shop.js'
+import app from './app.js'
+import user from './user.js'
+import config from './config.js'
 
 const routes= [
   {
@@ -25,10 +28,16 @@ const routes= [
         path: '/home',
         name: 'Home',
         component:() => import('../views/home/index.vue'),
-        meta: { name: 'Home'}
+        meta: { class1: 'shop', class2: 'shop', class3: '' }
       },
       /** --- 商城管理 --- **/
-      ...shop
+      ...shop,
+      /** --- 内容管理 --- **/
+      ...app,
+      /** --- 用户管理 --- **/
+      ...user,
+      /** --- 系统管理 --- **/
+      ...config
     ]
   },
 

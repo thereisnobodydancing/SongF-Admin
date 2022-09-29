@@ -1,6 +1,5 @@
-<!-- 类目管理 -->
 <template>
   <div>
-    类目管理
+    搜索推荐（编辑）
   </div>
 </template>

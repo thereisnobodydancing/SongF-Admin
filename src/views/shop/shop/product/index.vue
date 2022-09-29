@@ -1,3 +1,4 @@
+<!-- /shop/shop/product -->
 <!-- 商城管理 -> 商城中心 -> 商品列表（列表） -->
 <template>
   <div class="w-full h-full flex flex-col space-y-4">

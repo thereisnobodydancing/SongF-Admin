@@ -22,7 +22,8 @@
 </template>
 
 <script setup>
+const route = useRoute()
 const mainHeight = document.documentElement.clientHeight - 64
-const headerKey = ref('shop')
+const headerKey = ref(route.meta.class1 ? route.meta.class1 : '')
 const headerChange = (key) => headerKey.value = key
 </script>
