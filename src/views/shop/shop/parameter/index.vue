@@ -34,6 +34,10 @@
         <el-button type="primary" class="w-24">添加商品</el-button>
       </div>
     </div>
+    <!-- 表单 -->
+    <div class="w-full h-full bg-white">
+
+    </div>
   </div>
 </template>
 

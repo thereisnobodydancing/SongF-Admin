@@ -32,14 +32,19 @@
       </div>
       <div>
         <el-button type="primary" class="w-24">筛选</el-button>
-        <el-button type="primary" plain class="w-24">清空</el-button>
+        <el-button type="primary" plain class="w-24" @click="clearForm">清空</el-button>
         <el-button type="primary" plain class="w-24">导出报表</el-button>
-        <el-button type="primary" class="w-24">添加商品</el-button>
+        <el-button type="primary" class="w-24" @click="$router.push('/shop/shop/product/add')">添加商品</el-button>
       </div>
     </div>
     <!-- 表单 -->
     <div class="flex-grow w-full h-full bg-white">
-      33
+      <base-pagination
+        url="/product/guige/getProductPage"
+        :params="params"
+      >
+        33
+      </base-pagination>
     </div>
   </div>
 </template>
@@ -52,4 +57,6 @@ const params = reactive({
   starttime: '',
   endtime: '',
 })
+// 清空表单
+const clearForm = () => params.name = params.id = params.sku = params.starttime = params.endtime = ''
 </script>

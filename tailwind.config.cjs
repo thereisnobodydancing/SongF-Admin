@@ -9,7 +9,8 @@ module.exports = {
     extend: {},
     colors: {
       white: colors.white,
-      black: colors.black,
+      blue: colors.blue,
+      gray: colors.gray,
       'primary': '#409EFF',
       'success': '#67C23A',
       'warning': '#E6A23C',
@@ -19,7 +20,7 @@ module.exports = {
       'sidebar': '#212126',
       'gray-900': '#303133',
       'gray-600': '#606266',
-      'gray-300': '#909399',
+      'gray-500': '#909399',
       'placeholder': '#A8ABB2',
       'disabled': '#C0C4CC',
       'border-base': '#DCDFE6',

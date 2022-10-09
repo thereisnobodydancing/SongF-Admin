@@ -20,7 +20,7 @@
       <button
         :aria-label="item.label"
         class="w-[119px] h-16 flex items-center justify-center space-x-2"
-        :class="[headerKey === item.key ? 'text-white bg-gray-300/30' : ' text-white/80 hover:text-white hover:bg-gray-300/10']"
+        :class="[headerKey === item.key ? 'text-white bg-gray-500/30' : ' text-white/80 hover:text-white hover:bg-gray-500/10']"
         @click="handleOption(item.key)"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -32,8 +32,12 @@
     </div>
     <!-- header-user（头部-用户） -->
     <div class="flex-shrink-0 ml-auto flex items-center cursor-pointer">
-      <div class="w-9 h-9 bg-gray-300 rounded-full"></div>
-      <p class="ml-3 mr-2 text-white">安星星</p>
+      <div class="w-9 h-9 bg-gray-200 rounded-full py-1.5">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mx-auto">
+          <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <p class="ml-3 mr-2 text-white">{{ user.name }}</p>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white">
         <path fill-rule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clip-rule="evenodd" />
       </svg>
@@ -47,6 +51,7 @@ import logoImg from '/src/assets/logo.png'
 
 const route = useRoute()
 const router = useRouter()
+const user = JSON.parse(sessionStorage.getItem('user'))
 const emit = defineEmits(['change'])
 const headerKey = ref(route.meta.class1 ? route.meta.class1 : '')
 const headerList = [

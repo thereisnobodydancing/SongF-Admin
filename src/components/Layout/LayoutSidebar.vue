@@ -1,26 +1,26 @@
 <template>
-  <div class="h-full flex">
+  <div class="w-[17rem] h-full flex transform">
     <!-- sidebar（侧边栏2级） -->
-    <div class="flex-shrink-0 w-28 bg-sidebar">
+    <div class="flex-shrink-0 w-[42%] bg-sidebar">
       <button
         v-for="item in sidebarData[props.headerKey]"
         :key="item.key"
         :aria-label="item.label"
-        class="w-full h-12 text-white/80 hover:text-white hover:bg-gray-300/30"
-        :class="{'bg-gray-300/30': sidebarKey === item.key}"
+        class="w-full h-12 text-white/80 hover:text-white hover:bg-gray-500/30"
+        :class="{'bg-gray-500/30': sidebarKey === item.key}"
         @mouseenter="hoverOption(item.list, item.key)"
       >
         {{ item.label }}
       </button>
     </div>
     <!-- sidebar2（侧边栏3级） -->
-    <div class="flex-shrink-0 w-40 bg-page/30">
+    <div class="flex-shrink-0 w-[58%] bg-page/30">
       <button
         v-for="(item, index) in sidebarList"
         :key="item.key"
         :aria-label="item.label"
-        class="w-full h-12 hover:bg-gray-300/10"
-        :class="{'bg-gray-300/20 border-r-2 border-r-primary': $route.meta.class1 === props.headerKey && $route.meta.class2 === sidebarKey && $route.meta.class3 === item.key}"
+        class="w-full h-12 hover:bg-gray-500/10"
+        :class="{'bg-gray-500/20 border-r-2 border-r-primary': $route.meta.class1 === props.headerKey && $route.meta.class2 === sidebarKey && $route.meta.class3 === item.key}"
         @click="$router.push(item.url)"
       >
         {{ item.label }}
@@ -90,7 +90,7 @@ const sidebarData = {
       ]
     },
     { 
-      label: '瓷片管理', 
+      label: '磁片管理', 
       key: 'porcelain',
       list: [
         { label: '首页热门商品', key: 'homehot', url: '/app/porcelain/homehot' },
