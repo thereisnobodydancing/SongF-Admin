@@ -97,8 +97,8 @@
                 </div>
                 <!-- 两列商品 -->
                 <div v-if="element.id === '1'" class="px-4 cursor-pointer">
-                  <div class="h-10 flex items-center">
-                    <p class="text-base font-bold">磁片标题</p>
+                  <div v-if="element.title" class="h-10 flex items-center">
+                    <p class="text-base font-bold">{{ element.title }}</p>
                     <p class="ml-3 text-gray-500">磁片描述</p>
                     <p class="ml-auto">更多 ></p>
                   </div>
@@ -219,6 +219,19 @@
                 </div>
               </div>
             </div>
+            <!-- 两列商品 -->
+            <div 
+              v-if="active !== null && data.list.length > 0 && data.list[active].id === '1'" 
+              class="space-y-6"
+            >
+              <!-- 磁片标题 -->
+              <div class="space-y-2">
+                {{ menu[0] }}
+                <p>磁片标题：</p>
+                <el-input v-model="data.list[active].title" maxlength="15" placeholder="请输入标题，3-6个字符（选填）" clearable />
+                <p class="text-xs text-gray-300">无磁片标题时，磁片将不展示头部区域，直接展示商品类表，且描述和链接无论是否填写都不会显示。</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -227,17 +240,22 @@
 </template>
 
 <script setup>
-import { nextTick } from 'vue';
+import { nextTick, watch } from 'vue';
 import draggable from 'vuedraggable'
 import PhoneMockup from './components/PhoneMockup.vue'
 
 const height = document.documentElement.clientHeight
 const menu = [
-  { id: '1', name: '两列商品'},
+  { id: '1', name: '两列商品', title: '', desc: ''},
   { id: '2', name: '三列商品'},
   { id: '3', name: '大图广告'},
   { id: '4', name: '标题文本'}
 ]
+watch(() => menu, value => {
+  console.log(value)
+}, {
+  deep: true
+})
 const data = reactive({
   title: '',
   color: '#FFFFFF',

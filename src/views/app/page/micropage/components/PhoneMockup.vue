@@ -44,7 +44,3 @@ const props = defineProps({
   }
 })
 </script>
-
-<style scoped>
-::-webkit-scrollbar { @apply w-0 }
-</style>
