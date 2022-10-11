@@ -20,7 +20,7 @@
           class="mt-4 grid grid-cols-2 gap-4"
         >
           <template #item="{element, index}">
-            <div class="space-y-2" @click="selMenu(index)">
+            <div class="space-y-2" @click="selMenu(element)">
               <p class="text-gray-600 select-none">{{ element.name }}{{ index }}</p>
               <div class="w-full h-20 border border-gray-300 cursor-pointer">
                 <!-- 两列商品 -->
@@ -62,12 +62,12 @@
       <div class="py-4">
         <phone-mockup :title="data.title" :color="data.color">
           <draggable
-            id="centerId"
-            :list="data.list"
+            id="formId"
+            :list="list"
             group="micropage"
             item-key="name"
             class="w-full overflow-y-scroll pb-4 min-h-[500px]"
-            :class="{'border-t-2 border-dotted': data.list.length === 0}"
+            :class="{'border-t-2 border-dotted': list.length === 0}"
             :style="{height: height - 310 + 'px'}"
             ghost-class="ghost"
             chosen-class="chosen"
@@ -76,7 +76,7 @@
             @update="updateList"
           >
             <template #header>
-              <div v-if="data.list.length === 0" class="text-gray-500 p-2">点击或拖拽左侧控件至此处</div>
+              <div v-if="list.length === 0" class="text-gray-500 p-2">点击或拖拽左侧控件至此处</div>
             </template>
             <template #item="{element, index}">
               <div
@@ -97,9 +97,9 @@
                 </div>
                 <!-- 两列商品 -->
                 <div v-if="element.id === '1'" class="px-4 cursor-pointer">
-                  <div v-if="element.title" class="h-10 flex items-center">
-                    <p class="text-base font-bold">{{ element.title }}</p>
-                    <p class="ml-3 text-gray-500">磁片描述</p>
+                  <div v-if="data.list[index].title" class="h-10 flex items-center">
+                    <p class="text-base font-bold">{{ data.list[index].title }}</p>
+                    <p class="ml-3 text-gray-500">{{ data.list[index].desc }}</p>
                     <p class="ml-auto">更多 ></p>
                   </div>
                   <div class="grid grid-cols-2 gap-3 py-2">
@@ -171,8 +171,7 @@
             通用设置
           </button>
           <draggable
-            id="centerId"
-            :list="data.list"
+            :list="list"
             group="micropage"
             item-key="name"
             class="w-full overflow-y-scroll pb-4"
@@ -208,7 +207,7 @@
               <!-- 页面标题 -->
               <div class="space-y-2">
                 <p><span class="text-error font-bold mr-1">*</span>页面标题：</p>
-                <el-input v-model="data.title" maxlength="15" placeholder="请输入页面标题，最多15个字符" clearable />
+                <el-input v-model="data.title" maxlength="15" placeholder="请输入页面标题，最多15个字符" show-word-limit clearable />
               </div>
               <!-- 背景颜色 -->
               <div class="flex items-center">
@@ -226,10 +225,14 @@
             >
               <!-- 磁片标题 -->
               <div class="space-y-2">
-                {{ menu[0] }}
                 <p>磁片标题：</p>
-                <el-input v-model="data.list[active].title" maxlength="15" placeholder="请输入标题，3-6个字符（选填）" clearable />
+                <el-input v-model="data.list[active].title" :minlength="3" :maxlength="6" placeholder="请输入标题，3-6个字符（选填）" show-word-limit clearable />
                 <p class="text-xs text-gray-300">无磁片标题时，磁片将不展示头部区域，直接展示商品类表，且描述和链接无论是否填写都不会显示。</p>
+              </div>
+              <!-- 磁片描述 -->
+              <div class="space-y-2">
+                <p>磁片描述：</p>
+                <el-input v-model="data.list[active].desc" :minlength="4" :maxlength="12" placeholder="请输入描述，4-12个字符（选填）" show-word-limit clearable />
               </div>
             </div>
           </div>
@@ -246,28 +249,30 @@ import PhoneMockup from './components/PhoneMockup.vue'
 
 const height = document.documentElement.clientHeight
 const menu = [
-  { id: '1', name: '两列商品', title: '', desc: ''},
+  { id: '1', name: '两列商品'},
   { id: '2', name: '三列商品'},
   { id: '3', name: '大图广告'},
   { id: '4', name: '标题文本'}
 ]
-watch(() => menu, value => {
-  console.log(value)
-}, {
-  deep: true
-})
+const list = ref([])
 const data = reactive({
   title: '',
   color: '#FFFFFF',
   list: []
 })
+watch(list.value, value => {
+  data.list = []
+  value.forEach(item => {
+    if(item.id === '1') data.list.push({ id: '1', name: '两列商品', title: '', desc: '', more: '', products: [] })
+  })
+})
 // 当前选中的
 const active = ref(null)
 // 点击左侧菜单
-const selMenu = function(index) {
-  data.list.push(menu[index])
-  active.value = data.list.length - 1
-  const centerHTML = document.querySelector('#centerId')
+const selMenu = function(item) {
+  list.value.push(item)
+  active.value = list.value.length - 1
+  const centerHTML = document.querySelector('#formId')
   nextTick(() => {
     centerHTML.scrollTop = centerHTML.scrollHeight
   })
@@ -275,13 +280,13 @@ const selMenu = function(index) {
 
 // 删除一个内容
 const removeItem = function(index) {
-  data.list.splice(index, 1)
+  list.value.splice(index, 1)
   active.value = null
 }
 
 // 添加单元的回调函数
 const addList = function({newIndex}) {
-  active.value = data.list.length === 1 ? 0 : newIndex
+  active.value = list.value.length === 1 ? 0 : newIndex
 }
 // 选则单元时的回调函数
 const chooseList = function({item, oldIndex}) {
@@ -289,7 +294,7 @@ const chooseList = function({item, oldIndex}) {
     active.value = oldIndex
     const componentHTML = document.querySelector(`#component${oldIndex}Id`)
     nextTick(() => {
-      document.querySelector('#centerId').scrollTop = componentHTML.offsetTop - 70
+      document.querySelector('#formId').scrollTop = componentHTML.offsetTop - 70
     })
   }
 }
