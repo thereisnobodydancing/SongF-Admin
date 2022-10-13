@@ -12,7 +12,7 @@
       <div class="w-72 bg-white p-4">
         <p class="text-base font-bold">组件</p>
         <draggable
-          :list="menu"
+          :list="components"
           :sort="false"
           animation=200
           :group="{ name: 'micropage', pull: 'clone', put: false }"
@@ -20,54 +20,20 @@
           class="mt-4 grid grid-cols-2 gap-4"
         >
           <template #item="{element, index}">
-            <div class="space-y-2" @click="selMenu(element)">
-              <p class="text-gray-600 select-none">{{ element.name }}{{ index }}</p>
-              <div class="w-full h-20 border border-gray-300 cursor-pointer">
-                <!-- 两列商品 -->
-                <div 
-                  v-if="element.id === '1'" 
-                  class="w-full h-full px-1.5 py-2 flex space-x-2"
-                >
-                  <div v-for="i in 2" :key="i" class="w-full space-y-1">
-                    <div class="w-full h-11 bg-gray-300" />
-                    <div class="w-full h-1.5 bg-gray-300" />
-                    <div class="w-1/3 h-1.5 bg-gray-300" />
-                  </div>
-                </div>
-                <!-- 三列商品 -->
-                <div 
-                  v-if="element.id === '2'" 
-                  class="w-full h-full px-1.5 py-2 flex space-x-2"
-                >
-                  <div v-for="i in 3" :key="i" class="w-full space-y-1">
-                    <div class="w-full h-11 bg-gray-300" />
-                    <div class="w-full h-1.5 bg-gray-300" />
-                    <div class="w-1/3 h-1.5 bg-gray-300" />
-                  </div>
-                </div>
-                <!-- 大图广告 -->
-                <div v-if="element.id === '3'" class="h-full p-1">
-                  <div class="w-full h-full bg-gray-300" />
-                </div>
-                <!-- 标题文本 -->
-                <div v-if="element.id === '4'" class="h-full p-2">
-                  <div class="w-2/3 h-2.5 bg-gray-300" />
-                </div>
-              </div>
-            </div>
+            <micro-components :item="element" @click="handleClickComponent(element)" />
           </template>
         </draggable>
       </div>
-      <!-- 中间-模拟区 -->
+      <!-- 中间-渲染区 -->
       <div class="py-4">
-        <phone-mockup :title="data.title" :color="data.color">
+        <phone-mockup :title="data.title" :color="data.background">
           <draggable
             id="formId"
-            :list="list"
+            :list="data.list"
             group="micropage"
             item-key="name"
             class="w-full overflow-y-scroll pb-4 min-h-[500px]"
-            :class="{'border-t-2 border-dotted': list.length === 0}"
+            :class="{'border-t-2 border-dotted': data.list.length === 0}"
             :style="{height: height - 310 + 'px'}"
             ghost-class="ghost"
             chosen-class="chosen"
@@ -76,90 +42,34 @@
             @update="updateList"
           >
             <template #header>
-              <div v-if="list.length === 0" class="text-gray-500 p-2">点击或拖拽左侧控件至此处</div>
+              <div v-if="data.list.length === 0" class="text-gray-500 p-2">点击或拖拽左侧控件至此处</div>
             </template>
             <template #item="{element, index}">
               <div
                 :id="`component${index}Id`"
-                class="cursor-default"
-                :class="{'relative pt-6' : active === index}"
+                class="cursor-default relative"
+                :class="{'border-b-2 border-primary/80': active === index}"
               >
+                <micro-render :item="element"/>
                 <!-- 书签 -->
-                <div :class="{'hidden' : active !== index}" class="absolute inset-0 bg-primary/20 cursor-pointer">
-                  <button class="bg-primary text-white h-6 ml-auto flex items-center">
-                    <span class="px-2 border-r leading-6 text-xs">{{ element.name }}</span>
-                    <div class="px-1 hover:opacity-60" @click="removeItem(index)">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-                        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                      </svg>
-                    </div>
-                  </button>
-                </div>
-                <!-- 两列商品 -->
-                <div v-if="element.id === '1'" class="px-4 cursor-pointer">
-                  <div v-if="data.list[index].title" class="h-10 flex items-center">
-                    <p class="text-base font-bold">{{ data.list[index].title }}</p>
-                    <p class="ml-3 text-gray-500">{{ data.list[index].desc }}</p>
-                    <p class="ml-auto">更多 ></p>
-                  </div>
-                  <div class="grid grid-cols-2 gap-3 py-2">
-                    <div v-for="i in 4" :key="i" class="shadow rounded-md bg-white">
-                      <div class="w-full h-32 bg-gray-300 rounded-t-md text-center text-gray-500 py-10">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mx-auto">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                        </svg>
-                        <p class="text-xs">商品图片</p>
-                      </div>
-                      <div class="w-full h-16 p-3 space-y-1.5">
-                        <div class="w-full h-2.5 bg-gray-300"></div>
-                        <div class="w-1/3 h-2.5 bg-gray-300"></div>
-                        <div class="w-2/3 h-2.5 bg-gray-300"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- 三列商品 -->
-                <div v-if="element.id === '2'" class="px-4 cursor-pointer">
-                  <div class="h-10 flex items-center">
-                    <p class="text-base font-bold">磁片标题</p>
-                    <p class="ml-3 text-gray-500">磁片描述</p>
-                    <p class="ml-auto">更多 ></p>
-                  </div>
-                  <div class="grid grid-cols-3 gap-3 py-2">
-                    <div v-for="i in 6" :key="i" class="shadow rounded-md bg-white">
-                      <div class="w-full h-24 bg-gray-300 rounded-t-md text-center text-gray-500 py-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mx-auto">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                        </svg>
-                        <p class="text-xs">商品图片</p>
-                      </div>
-                      <div class="w-full h-14 p-2.5 space-y-1.5">
-                        <div class="w-full h-2 bg-gray-300"></div>
-                        <div class="w-1/3 h-2 bg-gray-300"></div>
-                        <div class="w-2/3 h-2 bg-gray-300"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- 大图广告 -->
-                <div v-if="element.id === '3'" class="cursor-pointer">
-                  <div class="w-full h-48 bg-gray-300 text-gray-500 flex flex-col items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                <div v-show="active === index" class="absolute inset-0 bg-gradient-to-b from-primary/0 to-primary/20 cursor-pointer"></div>
+                <button 
+                  v-show="active === index"
+                  class="absolute bottom-0.5 right-0.5 bg-primary/90 text-white h-7 flex items-center rounded"
+                >
+                  <span class="px-2 border-r text-xs cursor-default">{{ element.name }}</span>
+                  <div class="px-1" @click="removeItem(index)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                     </svg>
-                    <p class="text-xs">大图广告</p>
                   </div>
-                </div>
-                <!-- 标题文本 -->
-                <div v-if="element.id === '4'" class="px-4 py-2 cursor-pointer">
-                  <p class="text-base font-bold">标题文本</p>
-                </div>
+                </button>
               </div>
             </template>
           </draggable>
         </phone-mockup>
       </div>
-      <!-- 右侧-布局区 -->
+      <!-- 右侧-属性编辑区 -->
       <div class="w-1/3 bg-white flex ">
         <!-- 列表 -->
         <div class="flex-shrink-0 w-32 h-full border-r">
@@ -171,7 +81,7 @@
             通用设置
           </button>
           <draggable
-            :list="list"
+            :list="data.list"
             group="micropage"
             item-key="name"
             class="w-full overflow-y-scroll pb-4"
@@ -198,44 +108,7 @@
         </div>
         <!-- 内容 -->
         <div class="flex-grow">
-          <div class="h-12 border-b px-4">
-            <p class="text-base font-bold leading-[3rem]">{{ active === null ? '通用设置' : data.list[active].name }}</p>
-          </div>
-          <div class="p-4">
-            <!-- 通用设置 -->
-            <div v-if="active === null" class="space-y-6">
-              <!-- 页面标题 -->
-              <div class="space-y-2">
-                <p><span class="text-error font-bold mr-1">*</span>页面标题：</p>
-                <el-input v-model="data.title" maxlength="15" placeholder="请输入页面标题，最多15个字符" show-word-limit clearable />
-              </div>
-              <!-- 背景颜色 -->
-              <div class="flex items-center">
-                <p>背景颜色：</p>
-                <p class="ml-4">{{ data.color }}</p>
-                <div class="ml-auto">
-                  <el-color-picker v-model="data.color" />
-                </div>
-              </div>
-            </div>
-            <!-- 两列商品 -->
-            <div 
-              v-if="active !== null && data.list.length > 0 && data.list[active].id === '1'" 
-              class="space-y-6"
-            >
-              <!-- 磁片标题 -->
-              <div class="space-y-2">
-                <p>磁片标题：</p>
-                <el-input v-model="data.list[active].title" :minlength="3" :maxlength="6" placeholder="请输入标题，3-6个字符（选填）" show-word-limit clearable />
-                <p class="text-xs text-gray-300">无磁片标题时，磁片将不展示头部区域，直接展示商品类表，且描述和链接无论是否填写都不会显示。</p>
-              </div>
-              <!-- 磁片描述 -->
-              <div class="space-y-2">
-                <p>磁片描述：</p>
-                <el-input v-model="data.list[active].desc" :minlength="4" :maxlength="12" placeholder="请输入描述，4-12个字符（选填）" show-word-limit clearable />
-              </div>
-            </div>
-          </div>
+          <micro-config :data="data" :active="active" />
         </div>
       </div>
     </div>
@@ -243,35 +116,44 @@
 </template>
 
 <script setup>
-import { nextTick, watch } from 'vue';
 import draggable from 'vuedraggable'
+import { debounce } from 'lodash'
 import PhoneMockup from './components/PhoneMockup.vue'
+import MicroComponents from './components/MicroComponents.vue'
+import MicroRender from './components/MicroRender.vue'
+import MicroConfig from './components/MicroConfig.vue'
 
 const height = document.documentElement.clientHeight
-const menu = [
-  { id: '1', name: '两列商品'},
-  { id: '2', name: '三列商品'},
-  { id: '3', name: '大图广告'},
-  { id: '4', name: '标题文本'}
-]
-const list = ref([])
+
+// 左侧： 组件区
+const components = ref([
+  {id: '1', name: '两列商品', options: {name: '', desc: '', link: '', products: []}},
+  {id: '2', name: '三列商品', options: {name: '', desc: '', link: '', products: []}},
+  {id: '3', name: '大图广告', options: {name: '', iamge: '', link: ''}},
+  {id: '4', name: '标题文本', options: {name: '', position: 'left', size: 'base', bold: true, color: '#333333', background: '#FFFFFF'}}        //large, default, small
+])
+const initComponents = debounce(() => {
+  components.value = [
+    {id: '1', name: '两列商品', options: {name: '', desc: '', link: '', products: []}},
+    {id: '2', name: '三列商品', options: {name: '', desc: '', link: '', products: []}},
+    {id: '3', name: '大图广告', options: {name: '', iamge: '', link: ''}},
+    {id: '4', name: '标题文本', options: {name: '', position: 'left', size: 'base', bold: true, color: '#333333', background: '#FFFFFF'}}        //large, default, small
+  ]
+}, 300, {leading: true, trailing: false})
+
+// 中间：渲染区 以及 右侧：属性编辑区
 const data = reactive({
   title: '',
-  color: '#FFFFFF',
+  background: '#FFFFFF',
   list: []
-})
-watch(list.value, value => {
-  data.list = []
-  value.forEach(item => {
-    if(item.id === '1') data.list.push({ id: '1', name: '两列商品', title: '', desc: '', more: '', products: [] })
-  })
 })
 // 当前选中的
 const active = ref(null)
 // 点击左侧菜单
-const selMenu = function(item) {
-  list.value.push(item)
-  active.value = list.value.length - 1
+const handleClickComponent = function(item) {
+  data.list.push(item)
+  initComponents()
+  active.value = data.list.length - 1
   const centerHTML = document.querySelector('#formId')
   nextTick(() => {
     centerHTML.scrollTop = centerHTML.scrollHeight
@@ -280,13 +162,14 @@ const selMenu = function(item) {
 
 // 删除一个内容
 const removeItem = function(index) {
-  list.value.splice(index, 1)
+  data.list.splice(index, 1)
   active.value = null
 }
 
 // 添加单元的回调函数
 const addList = function({newIndex}) {
-  active.value = list.value.length === 1 ? 0 : newIndex
+  initComponents()
+  active.value = data.list.length === 1 ? 0 : newIndex
 }
 // 选则单元时的回调函数
 const chooseList = function({item, oldIndex}) {
@@ -302,6 +185,10 @@ const chooseList = function({item, oldIndex}) {
 const updateList = function({newIndex}) {
   active.value = newIndex
 }
+
+onUnmounted(() => {
+  initComponents.cancel()
+})
 </script>
 
 <style scoped>
