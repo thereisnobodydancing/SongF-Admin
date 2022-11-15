@@ -103,10 +103,6 @@ const login = function () {
       ElMessage({ message: `欢迎你，${res.data.data.user.name}`, type: 'success'})
       router.push('/')
     }
-    if (res.data.code !== 20000) {
-      ElMessage({ message: res.data.msg, type: 'error'})
-      form.password = ''
-    }
     setTimeout(() => btnDisabled.value = false, 500)
   })
 }

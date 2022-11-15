@@ -1,8 +1,9 @@
 import axios from 'axios'
 import router from '../router'
 import qs from 'qs'
-const baseURL = import.meta.env.VITE_APP_URL
+import { ElMessage } from 'element-plus'
 
+const baseURL = import.meta.env.VITE_APP_URL
 const http = axios.create({
   baseURL,
   timeout: 20000,
@@ -23,15 +24,19 @@ http.interceptors.request.use(
 // 当获取服务器返回的信息时进行的处理
 http.interceptors.response.use(
   res => {
+    if(res.data.code === 20000) return res
+    if(res.data.code === 20001) {
+      ElMessage({ message: res.data.msg, type: 'warning'})
+      return res
+    }
     if(res.data.code === 20002) {
       if(window.sessionStorage.getItem("token")) {
         window.sessionStorage.removeItem("token")
       }
-      alert('登录超时，请重新登录')
+      alert(res.data.msg)
       router.push('/login')
       location.reload()
     }
-    return res
   },
   error => {
     return Promise.reject(error)
